@@ -44,25 +44,7 @@ pub fn write(natures: &Natures) -> Result<(), E> {
     File::create(&lib_file)?;
     let file = OpenOptions::new().append(true).open(&lib_file)?;
     let mut buf_writer = BufWriter::new(file);
-    buf_writer.write_all(
-        format!(
-            "\"use strict\";
-Object.defineProperty(exports, \"__esModule\", {{ value: true }});
-
-const path = require(\"path\");
-const fs = require(\"fs\");
-
-function native() {{
-    const modulePath = path.resolve(module.path, './{node_module}');
-    if (!fs.existsSync(modulePath)) {{
-        throw new Error(`Fail to find native module in: ${{modulePath}}`);
-    }}
-    return require(modulePath);
-}}
-const nativeModuleRef = native();
-"
-        )
-        .as_bytes(),
+    buf_writer.write_all(format!("import nativeModuleRef from {node_module};").as_bytes(),
     )?;
     for en_nature in natures.filter(|n| matches!(n, Nature::Refered(Refered::Enum(_, _, _)))) {
         if let Nature::Refered(en_nature) = en_nature {
