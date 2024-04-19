@@ -44,7 +44,7 @@ pub fn write(natures: &Natures) -> Result<(), E> {
     File::create(&lib_file)?;
     let file = OpenOptions::new().append(true).open(&lib_file)?;
     let mut buf_writer = BufWriter::new(file);
-    buf_writer.write_all(format!("import nativeModuleRef from \"{node_module}\";").as_bytes())?;
+    buf_writer.write_all(format!("import nativeModuleRef from \"./{node_module}\";").as_bytes())?;
     for en_nature in natures.filter(|n| matches!(n, Nature::Refered(Refered::Enum(_, _, _)))) {
         if let Nature::Refered(en_nature) = en_nature {
             if en_nature.is_enum_flat()? {
